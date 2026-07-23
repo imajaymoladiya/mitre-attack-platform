@@ -41,9 +41,16 @@ def test_pydantic_cypher_schema_validation():
 
 def test_get_version_not_found_handling():
     """
-    If no version metadata exists yet, it should return a 404.
+    If no version metadata exists in database, it should return a 404.
+    Mocks the MongoDB client connection to ensure correctness without active DB.
     """
-    # Since we can't guarantee if data is already loaded in the environment,
-    # we just check that the status code is either 200 or 404.
-    response = client.get("/api/v1/mitre/version")
-    assert response.status_code in (200, 404)
+    from unittest.mock import MagicMock, patch
+    
+    with patch("app.routes.mitre.mongo_client") as mock_mongo:
+        # Mock connection success but metadata not found
+        mock_mongo.metadata = MagicMock()
+        mock_mongo.metadata.find_one.return_value = None
+        
+        response = client.get("/api/v1/mitre/version")
+        assert response.status_code == 404
+        assert "No active MITRE dataset version found" in response.json()["detail"]
