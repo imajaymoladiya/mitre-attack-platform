@@ -8,6 +8,7 @@ logger = logging.getLogger(__name__)
 class LLMService:
     def __init__(self):
         self._openai_client = None
+        self._groq_client = None
         self._local_model = None
         self.embedding_dimension = 384  # Default to all-MiniLM-L6-v2 dimension
 
@@ -19,6 +20,16 @@ class LLMService:
                 api_key="lm-studio"  # LM Studio does not require a real key
             )
         return self._openai_client
+
+    @property
+    def groq_client(self):
+        if self._groq_client is None and settings.GROQ_API_KEY:
+            logger.info("Initializing Groq API client...")
+            self._groq_client = OpenAI(
+                base_url="https://api.groq.com/openai/v1",
+                api_key=settings.GROQ_API_KEY
+            )
+        return self._groq_client
 
     @property
     def local_model(self):
@@ -77,10 +88,25 @@ class LLMService:
 
     def chat_complete(self, messages: list[dict], temperature: float = 0.7) -> str:
         """
-        Generates a chat completion using LM Studio, falling back to a rule-based AI
-        helper if LM Studio is not accessible.
+        Generates a chat completion using Groq (if configured) or LM Studio,
+        falling back to a rule-based AI helper if neither is accessible.
         """
+        # Try Groq first if API key is provided
+        if settings.GROQ_API_KEY:
+            try:
+                logger.info(f"Generating chat completion via Groq using model: {settings.GROQ_MODEL_NAME}")
+                response = self.groq_client.chat.completions.create(
+                    model=settings.GROQ_MODEL_NAME,
+                    messages=messages,
+                    temperature=temperature
+                )
+                return response.choices[0].message.content or ""
+            except Exception as e:
+                logger.warning(f"Groq chat completion failed: {e}. Trying LM Studio fallback.")
+
+        # Try LM Studio
         try:
+            logger.info(f"Generating chat completion via LM Studio using model: {settings.LLM_MODEL_NAME}")
             response = self.openai_client.chat.completions.create(
                 model=settings.LLM_MODEL_NAME,
                 messages=messages,
@@ -92,7 +118,7 @@ class LLMService:
             # Basic fallback response generator for testing when LLM runtime is offline
             user_msg = messages[-1]["content"] if messages else ""
             return (
-                f"[Local Mock LLM Fallback (LM Studio offline)]\n"
+                f"[Local Mock LLM Fallback (LLM runtime offline)]\n"
                 f"You asked: '{user_msg}'\n"
                 f"This is a placeholder response because the local LLM runtime was not accessible."
             )

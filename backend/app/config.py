@@ -20,5 +20,9 @@ class Settings:
     LLM_API_BASE: str = os.getenv("LLM_API_BASE", "http://host.docker.internal:1234/v1")
     LLM_MODEL_NAME: str = os.getenv("LLM_MODEL_NAME", "nomic-ai/nomic-embed-text-v1.5-GGUF")
     USE_LOCAL_EMBEDDING_FALLBACK: bool = os.getenv("USE_LOCAL_EMBEDDING_FALLBACK", "true").lower() == "true"
+    
+    # Groq Integration
+    GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
+    GROQ_MODEL_NAME: str = os.getenv("GROQ_MODEL_NAME", "llama3-8b-8192")
 
 settings = Settings()
