@@ -7,6 +7,8 @@ from app.database.mongo import mongo_client
 from app.database.neo4j_db import neo4j_client
 from app.routes import mitre
 
+from contextlib import asynccontextmanager
+
 # Setup structured logging
 logging.basicConfig(
     level=logging.INFO,
@@ -17,26 +19,8 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Initialize FastAPI App
-app = FastAPI(
-    title="MITRE ATT&CK Data Management API",
-    description="A secure modular AI platform for storing, traversing, and searching MITRE ATT&CK datasets.",
-    version="1.0.0",
-    docs_url="/docs",
-    redoc_url="/redoc"
-)
-
-# Enable CORS for frontend and development use
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-@app.on_event("startup")
-async def startup_event():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     logger.info("Starting up MITRE API Backend...")
     
     # Connect to MongoDB
@@ -83,11 +67,30 @@ async def startup_event():
         except Exception as e:
             logger.error(f"One-time database initialization failed: {e}", exc_info=True)
 
-@app.on_event("shutdown")
-async def shutdown_event():
+    yield  # Hand over control to the application
+
     logger.info("Shutting down MITRE API Backend...")
     mongo_client.close()
     neo4j_client.close()
+
+# Initialize FastAPI App
+app = FastAPI(
+    title="MITRE ATT&CK Data Management API",
+    description="A secure modular AI platform for storing, traversing, and searching MITRE ATT&CK datasets.",
+    version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc",
+    lifespan=lifespan
+)
+
+# Enable CORS for frontend and development use
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Healthcheck Endpoint
 @app.get("/health", tags=["Health"])
