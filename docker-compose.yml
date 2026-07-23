@@ -21,6 +21,11 @@ services:
     restart: unless-stopped
     networks:
       - platform-network
+    deploy:
+      resources:
+        limits:
+          cpus: '1.5'
+          memory: 2048M
 
   neo4j:
     image: neo4j:5-community
@@ -41,6 +46,11 @@ services:
     restart: unless-stopped
     networks:
       - platform-network
+    deploy:
+      resources:
+        limits:
+          cpus: '1.5'
+          memory: 2048M
 
   backend:
     build:
@@ -77,6 +87,11 @@ services:
     restart: unless-stopped
     networks:
       - platform-network
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1024M
 
   frontend:
     build:
@@ -95,6 +110,11 @@ services:
     restart: unless-stopped
     networks:
       - platform-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
 
 volumes:
   mongodb_data:
