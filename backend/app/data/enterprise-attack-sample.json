@@ -1,0 +1,90 @@
+{
+  "type": "bundle",
+  "id": "bundle--5c59ba27-e43f-4e6f-8dc3-cbf963e6cdb2",
+  "spec_version": "2.1",
+  "objects": [
+    {
+      "type": "x-mitre-tactic",
+      "id": "x-mitre-tactic--d10cd39d-2101-4475-b82b-cf0f95180556",
+      "created": "2018-10-17T00:14:20.652Z",
+      "modified": "2019-07-19T14:48:50.198Z",
+      "name": "Initial Access",
+      "description": "The adversary is trying to get into your network.",
+      "x_mitre_version": "1.0",
+      "x_mitre_shortname": "initial-access",
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "url": "https://attack.mitre.org/tactics/TA0001",
+          "external_id": "TA0001"
+        }
+      ]
+    },
+    {
+      "type": "attack-pattern",
+      "id": "attack-pattern--0c8ab90f-b3a1-432d-8e5c-2e6b2161f364",
+      "created": "2020-03-09T14:12:00.000Z",
+      "modified": "2023-04-18T18:45:00.000Z",
+      "name": "Phishing",
+      "description": "Adversaries may send phishing messages to gain access to victim systems. All forms of phishing are targeted at human users to trick them into executing malicious payloads.",
+      "x_mitre_version": "1.0",
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "url": "https://attack.mitre.org/techniques/T1566",
+          "external_id": "T1566"
+        }
+      ]
+    },
+    {
+      "type": "malware",
+      "id": "malware--3a652a65-38b1-420a-9d2a-cd23e7f4b8ab",
+      "created": "2017-05-31T21:32:00.000Z",
+      "modified": "2022-04-20T12:00:00.000Z",
+      "name": "Cobalt Strike",
+      "description": "Cobalt Strike is a commercial penetration testing tool that can be used as a backdoor to maintain access to networks.",
+      "x_mitre_version": "1.0",
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "url": "https://attack.mitre.org/software/S0154",
+          "external_id": "S0154"
+        }
+      ]
+    },
+    {
+      "type": "course-of-action",
+      "id": "course-of-action--7b9fa6d0-e18e-48a0-bb65-0211831804b4",
+      "created": "2019-07-19T18:45:00.000Z",
+      "modified": "2021-10-15T15:30:00.000Z",
+      "name": "Antivirus/Antimalware",
+      "description": "Use signatures or heuristics to detect and block malicious files.",
+      "x_mitre_version": "1.0",
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "url": "https://attack.mitre.org/mitigations/M1049",
+          "external_id": "M1049"
+        }
+      ]
+    },
+    {
+      "type": "relationship",
+      "id": "relationship--c1753907-7422-4913-9a3e-6b1129b015cc",
+      "created": "2020-03-09T14:15:00.000Z",
+      "modified": "2020-03-09T14:15:00.000Z",
+      "relationship_type": "uses",
+      "source_ref": "malware--3a652a65-38b1-420a-9d2a-cd23e7f4b8ab",
+      "target_ref": "attack-pattern--0c8ab90f-b3a1-432d-8e5c-2e6b2161f364"
+    },
+    {
+      "type": "relationship",
+      "id": "relationship--f9202517-57bc-4ee6-857e-ccae37c95fb5",
+      "created": "2020-03-10T11:00:00.000Z",
+      "modified": "2020-03-10T11:00:00.000Z",
+      "relationship_type": "mitigates",
+      "source_ref": "course-of-action--7b9fa6d0-e18e-48a0-bb65-0211831804b4",
+      "target_ref": "attack-pattern--0c8ab90f-b3a1-432d-8e5c-2e6b2161f364"
+    }
+  ]
+}
