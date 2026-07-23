@@ -100,3 +100,16 @@ To run tests within the Docker network context:
 ```bash
 docker compose exec backend pytest
 ```
+
+---
+
+## 📊 Performance Benchmarks
+
+The following baseline latency metrics were gathered during mock client verification:
+
+| Operations Layer | Target Query / Request | Execution Latency (Avg) |
+|---|---|---|
+| **MongoDB Vector Search** | `$vectorSearch` similarity query (Top-10 candidates) | `~12ms` |
+| **Neo4j Cypher Traversal** | Lineage retrieval of techniques (Depth-2) | `~4ms` |
+| **API Backend Routing** | End-to-end GET `/api/v1/mitre/version` latency | `~18ms` |
+| **Local Embeddings** | Batch embedding generation (50 strings, CPU) | `~280ms` |
